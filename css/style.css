@@ -40,6 +40,14 @@
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
 
+.hero,
+.home-slider,
+.slider-item {
+  min-height: 100vh;
+  height: auto !important;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .js-fullheight {
   height: 100vh;
   min-height: 100vh;
