@@ -6,10 +6,10 @@ AOS.init({
 (function($) {
   "use strict";
 
-  // Fix full height on all devices (especially mobile)
+  // Fix .js-fullheight for mobile safely
   function fullHeightFix() {
-    var windowHeight = window.innerHeight;
-    $('.js-fullheight').css('height', windowHeight + 'px');
+    var height = window.innerHeight;
+    $('.js-fullheight').css('height', height + 'px');
   }
 
   $(document).ready(function () {
@@ -37,7 +37,7 @@ AOS.init({
     scrollProperty: 'scroll'
   });
 
-  // Scrollax – disabled on mobile
+  // Scrollax – only on desktop
   if ($(window).width() > 768) {
     $.Scrollax();
   }
@@ -55,7 +55,7 @@ AOS.init({
   };
   burgerMenu();
 
-  // Smooth scroll on nav link click
+  // Smooth scroll on nav click
   var onePageClick = function() {
     $(document).on('click', '#ftco-nav a[href^="#"]', function(event) {
       event.preventDefault();
@@ -88,7 +88,7 @@ AOS.init({
   };
   carousel();
 
-  // Navbar Dropdown
+  // Dropdown on hover
   $('nav .dropdown').hover(function() {
     var $this = $(this);
     $this.addClass('show');
@@ -105,7 +105,7 @@ AOS.init({
     console.log('show');
   });
 
-  // Navbar scroll behavior
+  // Navbar scroll effects
   var scrollWindow = function() {
     $(window).scroll(function() {
       var $w = $(this),
@@ -162,7 +162,7 @@ AOS.init({
   };
   counter();
 
-  // Element animation on scroll
+  // Animate elements on scroll
   var contentWayPoint = function() {
     var i = 0;
     $('.ftco-animate').waypoint(function(direction) {
@@ -192,7 +192,7 @@ AOS.init({
   };
   contentWayPoint();
 
-  // Magnific popup for images
+  // Magnific popup - image
   $('.image-popup').magnificPopup({
     type: 'image',
     closeOnContentClick: true,
@@ -202,7 +202,7 @@ AOS.init({
     gallery: {
       enabled: true,
       navigateByImgClick: true,
-      preload: [0,1]
+      preload: [0, 1]
     },
     image: {
       verticalFit: true
@@ -213,7 +213,7 @@ AOS.init({
     }
   });
 
-  // Magnific popup for iframes (YouTube, Vimeo, Google Maps)
+  // Magnific popup - iframe
   $('.popup-youtube, .popup-vimeo, .popup-gmaps').magnificPopup({
     disableOn: 700,
     type: 'iframe',
