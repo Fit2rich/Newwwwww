@@ -40,6 +40,16 @@
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
 
+.js-fullheight {
+  height: 100vh;
+  min-height: 100vh;
+  overflow: auto;
+}
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 html {
   font-family: sans-serif;
   line-height: 1.15;
