@@ -6,10 +6,11 @@ AOS.init({
 (function($) {
   "use strict";
 
-  // Fix .js-fullheight for mobile safely
+  // 1. Hero Section Full Height Fix (with mobile vh support)
   function fullHeightFix() {
-    var height = window.innerHeight;
-    $('.js-fullheight').css('height', height + 'px');
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    $('.js-fullheight').css('height', `calc(var(--vh, 1vh) * 100)`);
   }
 
   $(document).ready(function () {
@@ -17,17 +18,15 @@ AOS.init({
     $(window).on('resize orientationchange', fullHeightFix);
   });
 
-  // Loader
+  // 2. Loader
   var loader = function() {
     setTimeout(function() {
-      if ($('#ftco-loader').length > 0) {
-        $('#ftco-loader').removeClass('show');
-      }
+      $('#ftco-loader').removeClass('show');
     }, 1);
   };
   loader();
 
-  // Stellar Parallax
+  // 3. Stellar Parallax
   $(window).stellar({
     responsive: true,
     parallaxBackgrounds: true,
@@ -37,37 +36,35 @@ AOS.init({
     scrollProperty: 'scroll'
   });
 
-  // Scrollax – only on desktop
-  if ($(window).width() > 768) {
+  // 4. Scrollax on All Devices
+  if ($.Scrollax) {
     $.Scrollax();
   }
 
-  // Burger Menu
+  // 5. Burger Menu Toggle
   var burgerMenu = function() {
     $('body').on('click', '.js-fh5co-nav-toggle', function(event) {
       event.preventDefault();
-      if ($('#ftco-nav').is(':visible')) {
-        $(this).removeClass('active');
-      } else {
-        $(this).addClass('active');
-      }
+      $(this).toggleClass('active');
     });
   };
   burgerMenu();
 
-  // Smooth scroll on nav click
+  // 6. Smooth Scroll
   var onePageClick = function() {
     $(document).on('click', '#ftco-nav a[href^="#"]', function(event) {
       event.preventDefault();
-      var href = $.attr(this, 'href');
-      $('html, body').animate({
-        scrollTop: $($.attr(this, 'href')).offset().top - 70
-      }, 500);
+      var target = $($.attr(this, 'href'));
+      if (target.length) {
+        $('html, body').animate({
+          scrollTop: target.offset().top - 70
+        }, 500);
+      }
     });
   };
   onePageClick();
 
-  // Owl Carousel
+  // 7. Owl Carousel
   var carousel = function() {
     $('.home-slider').owlCarousel({
       loop: true,
@@ -78,17 +75,15 @@ AOS.init({
       nav: false,
       autoplayHoverPause: false,
       items: 1,
-      navText: ["<span class='ion-md-arrow-back'></span>", "<span class='ion-chevron-right'></span>"],
-      responsive: {
-        0: { items: 1 },
-        600: { items: 1 },
-        1000: { items: 1 }
-      }
+      navText: [
+        "<span class='ion-md-arrow-back'></span>",
+        "<span class='ion-chevron-right'></span>"
+      ]
     });
   };
   carousel();
 
-  // Dropdown on hover
+  // 8. Dropdown Menu Hover
   $('nav .dropdown').hover(function() {
     var $this = $(this);
     $this.addClass('show');
@@ -101,50 +96,31 @@ AOS.init({
     $this.find('.dropdown-menu').removeClass('show');
   });
 
-  $('#dropdown04').on('show.bs.dropdown', function () {
-    console.log('show');
-  });
-
-  // Navbar scroll effects
+  // 9. Navbar Scroll Effects
   var scrollWindow = function() {
     $(window).scroll(function() {
-      var $w = $(this),
-          st = $w.scrollTop(),
-          navbar = $('.ftco_navbar'),
-          sd = $('.js-scroll-wrap');
+      var st = $(this).scrollTop();
+      var navbar = $('.ftco_navbar');
+      var sd = $('.js-scroll-wrap');
 
       if (st > 150) {
-        if (!navbar.hasClass('scrolled')) {
-          navbar.addClass('scrolled');
-        }
+        navbar.addClass('scrolled');
+      } else {
+        navbar.removeClass('scrolled sleep');
       }
-      if (st < 150) {
-        if (navbar.hasClass('scrolled')) {
-          navbar.removeClass('scrolled sleep');
-        }
-      }
+
       if (st > 350) {
-        if (!navbar.hasClass('awake')) {
-          navbar.addClass('awake');
-        }
-        if (sd.length > 0) {
-          sd.addClass('sleep');
-        }
-      }
-      if (st < 350) {
-        if (navbar.hasClass('awake')) {
-          navbar.removeClass('awake');
-          navbar.addClass('sleep');
-        }
-        if (sd.length > 0) {
-          sd.removeClass('sleep');
-        }
+        navbar.addClass('awake');
+        sd.addClass('sleep');
+      } else {
+        navbar.removeClass('awake').addClass('sleep');
+        sd.removeClass('sleep');
       }
     });
   };
   scrollWindow();
 
-  // Counter animation
+  // 10. Counter Animation
   var counter = function() {
     $('#section-counter, .hero-wrap, .ftco-counter, .ftco-about').waypoint(function(direction) {
       if (direction === 'down' && !$(this.element).hasClass('ftco-animated')) {
@@ -162,7 +138,7 @@ AOS.init({
   };
   counter();
 
-  // Animate elements on scroll
+  // 11. Animate Elements on Scroll
   var contentWayPoint = function() {
     var i = 0;
     $('.ftco-animate').waypoint(function(direction) {
@@ -192,7 +168,28 @@ AOS.init({
   };
   contentWayPoint();
 
-  // Magnific popup - image
+  // 12. Fallback: Trigger animations on load if visible (for mobile fix)
+  $.fn.visible = function(partial) {
+    var $t = $(this),
+        $w = $(window),
+        viewTop = $w.scrollTop(),
+        viewBottom = viewTop + $w.height(),
+        _top = $t.offset().top,
+        _bottom = _top + $t.height(),
+        compareTop = partial ? _bottom : _top,
+        compareBottom = partial ? _top : _bottom;
+    return ((compareBottom <= viewBottom) && (compareTop >= viewTop));
+  };
+
+  $(window).on('load', function () {
+    $('.ftco-animate').each(function () {
+      if ($(this).visible(true)) {
+        $(this).addClass('fadeInUp ftco-animated');
+      }
+    });
+  });
+
+  // 13. Magnific Popup - Image
   $('.image-popup').magnificPopup({
     type: 'image',
     closeOnContentClick: true,
@@ -213,7 +210,7 @@ AOS.init({
     }
   });
 
-  // Magnific popup - iframe
+  // 14. Magnific Popup - Iframe (YouTube, Vimeo, Google Maps)
   $('.popup-youtube, .popup-vimeo, .popup-gmaps').magnificPopup({
     disableOn: 700,
     type: 'iframe',
@@ -224,4 +221,3 @@ AOS.init({
   });
 
 })(jQuery);
-
